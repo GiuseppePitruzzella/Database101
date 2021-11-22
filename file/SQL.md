@@ -1,6 +1,6 @@
 # Capitolo 3 - SQL
 
-Appunti di **Giuseppe Pitruzzella** - Corso di Database @ DMI, UniCt
+*Appunti di **Giuseppe Pitruzzella** - Corso di Database @ DMI, UniCt*
 
 [TODO] *Integra con gli appunti delle Slides.*
 
