@@ -1,0 +1,64 @@
+------------------------------------------------------
+<?xml version='1.0'?>
+<!DOCTYPE verbali
+[
+<!ELEMENT verbali (verbale)*> <!-- ROOT-->
+<!ELEMENT verbale (studente,esame?)>
+<!ELEMENT studente (nome*,cognome)>
+<!ATTLIST studente cdl CDATA #REQUIRED matr CDATA #REQUIRED>
+<!ELEMENT nome (#PCDATA)>
+<!ELEMENT cognome (#PCDATA)>
+<!ELEMENT esame (materia,docente,voto,lode,data)>
+<!ELEMENT materia (#PCDATA)>
+<!ELEMENT docente (#PCDATA)>
+<!ELEMENT voto (#PCDATA)>
+<!ELEMENT lode (#PCDATA)>
+<!ELEMENT data (#PCDATA)>
+]>
+<verbali>
+    <verbale>
+        <studente cdl='667' matr='123456'>
+            <nome>Filippo</nome>
+            <nome>Maria</nome>
+            <cognome>Rossi</cognome>
+        </studente>
+        <esame>
+            <materia>Data Mining</materia>
+            <docente>Ferro</docente>
+            <voto>30</voto>
+            <lode>Sì</lode>
+            <data>01/04/04</data>
+        </esame>
+    </verbale>
+</verbali>
+
+1. Risultati degli esami di Reti di Calcolatori per il CdL 667.
+
+<risultati> {
+for $x in doc("verbali.xml")//verbale
+where $x/studente/@cdl = 667 and $x/esame/materia="Reti di Calcolatori"
+return <esami>{/voto}</esami>
+} </risultati>
+
+2. Un possibile DTD
+<!-- Ogni element descrive un nodo. All'interno della parentesi vi sono i suoi figli -->
+<!-- * indica (0, N), + indica (1, N), ? indica (0, 1) -->
+<!-- Un elemento PCDATA, al contrario di CDATA, viene analizzato dal parser -->
+<!-- Gli attributi per un nodo sono definiti con ATTLIST nomeNodo nomeAttributo_1 PCDATA o CDATA e #REQUIRED o #IMPLIED nomeAttributo_2 ... -->
+<!ELEMENT verbali (verbale)*> 
+<!ELEMENT verbale (studente,esame?)>
+<!ELEMENT studente (nome*,cognome)>
+<!ATTLIST studente cdl CDATA #REQUIRED matr CDATA #REQUIRED>
+<!ELEMENT nome (#PCDATA)>
+<!ELEMENT cognome (#PCDATA)>
+<!ELEMENT esame (materia,docente,voto,lode,data)>
+<!ELEMENT materia (#PCDATA)>
+<!ELEMENT docente (#PCDATA)>
+<!ELEMENT voto (#PCDATA)>
+<!ELEMENT lode (#PCDATA)>
+<!ELEMENT data (#PCDATA)>
+
+
+
+
+------------------------------------------------------

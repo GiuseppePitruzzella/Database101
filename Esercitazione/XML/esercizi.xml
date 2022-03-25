@@ -1,0 +1,535 @@
+<!--ESERCIZIO 4-->
+<!DOCTYPE	verbali	[		
+	<!ELEMENT	verbali	(verbale)*	>		
+	<!ELEMENT	verbale	(studente,esame)	>		
+	<!ELEMENT	studente	(nome+,cognome)	>		
+	<!ATTLIST	studente	cdl	 CDATA	#REQUIRED		
+								matricola	 CDATA	#REQUIRED	>		
+	<!ELEMENT	esame	(materia,docente,voto,lode?,data)	>		
+	<!ELEMENT	nome	(#PCDATA)	>		
+	<!ELEMENT	cognome	(#PCDATA)	>		
+	<!ELEMENT	materia	(#PCDATA)	>		
+	<!ELEMENT	docente	(#PCDATA)	>		
+	<!ELEMENT	voto	(#PCDATA)	>		
+	<!ELEMENT	lode	(#PCDATA)	>	
+]>	
+
+<?xml version="1.0" ?>
+	<verbali>
+		<verbale>
+			<studente cdl="inf" matricola="120302" >
+				<nome> Samuele </nome>
+				<cognome> Gallina </cognome>
+				
+			</studente>
+			
+			<esame>
+				<materia> prog 2 </materia>
+				<docente> pulvi </docente>
+				<voto> 17 </voto>
+				<lode> si </lode>
+				<data> ieri </data>
+			</esame>
+			
+		</verbale>
+		
+	</verbali>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+<!-- Scrivere una query in xquery per trovare le ricette che hanno 450 calorie e che richiedono 5 passi-->
+
+<!--ESERCIZIO 5-->
+<!ELEMENT collezione (descrzione,ricetta*)>
+<!ELEMENT descrizione ANY>
+<!ELEMENT ricetta (titolo,ingredienti*,preparazione,commenti?,fattori_nutritivi)>
+<!ELEMENT titolo (#PCDATA)>
+<!ELEMENT ingredienti (ingrediente*,preparazione)?>
+<!ATTLIST ingrediente nome CDATA #REQUIRED
+ quantità CDATA #IMPLIED
+ unità CDATA #IMPLIED>
+<!ELEMENT preparazione (passi*)>
+<!ELEMENT passo (#PCDATA)>
+<!ELEMENT commenti (#PCDATA)>
+<!ELEMENT fattori_nutritivi EMPTY>
+<!ATTLIST fattori nutritivi proteine CDATA #REQUIRED
+ carboidrati CDATA #REQUIRED
+ grassi CDATA #REQUIRED
+ calorie CDATA #REQUIRED
+ alcol CDATA #IMPLIED>
+
+<?xml version="1.0" ?>
+<collezione>
+	<descrizione> è molto buona </descrizione>
+	<ricetta>
+		<titolo> Purè </titolo>
+		<ingredienti>
+			<ingrediente nome="patata francese" quantità="2">
+            <preparazione> si trova in cucina </preparazione>
+		</ingredienti>
+		
+		<preparazione> 
+			<passo> infornare </passo>
+			<passo> ciao </passo>
+		</preparazione>
+		
+		<fattori_nutritivi proteine="20%" carboidrati="20%" grassi="20%" calorie="20g" alcol="100 ml"></fattori_nutritivi> 
+	</ricetta>
+</collezione>
+			
+		
+		
+
+
+
+
+
+
+
+
+
+
+
+
+<risultati>
+{
+	for $a in doc("ricetta.xml")/collezione/ricetta/
+	where $a/fattori_nutritivi/@calorie="450" AND count($a/preparazione/passi)=5
+	return	$a/titolo
+}
+</risultati>
+
+<!DOCTYPE	libretti[
+<!ELEMENT libretti (libretto)* >
+<!ELEMENT libretto (studente,esami?) >
+<!ELEMENT studente (nome,cognome) >
+<!ATTLIST studente cdl CDATA #REQUIRED
+matricola CDATA #REQUIRED >
+<!ELEMENT esami (esame)+ >
+<!ELEMENT esame (materia,voto,data) >
+]>
+
+materia,voto,data, nome e cognome sono PCDATA
+
+
+una interrogazione XQuery che, per ogni materia presente in libretti.xml, fornisca un elenco delle
+matricole degli studenti che hanno sostenuto il relativo esame 
+
+<risultati>
+{
+	let $e in doc("libretti.xml")//esame
+	for $m in distinct-values($e/materia)
+	return 
+		<materia> {$m} </materia>
+		{
+		for $lib in doc(libretti.xml)//libretto
+		where $lib/studente/esami/esame/materia=$ma
+		return <matricola>{ $lib/studente/@matricola } </matricola>
+		}
+}
+</risultati>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+una interrogazione XQuery che da un file libretti.xml conforme a tale DTD estragga cognome e
+nome di tutti gli studenti che hanno preso almeno un trenta agli esami
+
+<risultati>
+
+for $stud in doc(libretti.xml)/libretti/libretto
+where $stud/esami/esame/voto > 29 
+return <studente>
+		{	$stud/studente/nome ,
+			$stud/studente/cognome
+		}
+       </studente>
+
+</risultati>
+
+
+
+un file xml, che esemplifichi l’uso di tale DTD, contenente i dati relativi ai primi due esami
+sostenuti a Informatica dal candidato e ad uno studente Teo Verdi che non ha dato esami 
+
+
+<?xml version="1.0"?>
+<libretti>
+	<libretto>
+		<studente cdl="Informatica" matricola="1234567">
+			<nome> Mario </nome>
+			<cognome> Rossi </cognome>
+		</studente>
+		<esami>
+			<esame>
+				<materia> Prog 1 </materia>
+				<voto> 27 </voto>
+				<data> 12/01/2018 </data>
+			</esame>
+			<esame>
+				<materia> architettura </materia>
+				<voto> 25 </voto>
+				<data> 19/01/2018 </data>
+			</esame>
+		</esami>
+	</libretto>
+	
+	<libretto>
+		<studente cdl="Informatica" matricola="2378347">
+			<nome> Teo </nome>
+			<cognome> Verdi </cognome>
+		</studente>
+	</libretto>
+	
+</libretti>
+
+
+
+una interrogazione XQuery che, per ogni materia presente in libretti.xml, fornisca un elenco delle
+matricole degli studenti che hanno sostenuto il relativo esame 
+
+
+
+
+<?xml version=“1.0“ ?>
+<verbali>
+	<verbale>
+		<studente cdl=”667” matr=”123456”>
+			<nome>Filippo</nome>
+			<nome>Maria</nome>
+			<cognome>Rossi</cognome>
+		</studente>
+		<esame>
+			<materia>Data Mining</materia>
+			<docente>Ferro</docente>
+			<voto>30</voto>
+			<lode>Sì</lode>
+			<data>01/04/04</data>
+		</esame>
+	</verbale>
+</verbali> 
+
+una interrogazione XQuery che dal file verbali.xml estragga tutti i risultati degli esami di
+“Reti di Calcolatori” per il CdL “667”.
+
+<risultati>
+{
+	let $a in doc(verbali.xml)//verbale
+	for $b in $a/studente/@cdl="667"
+	where $b/esame/materia="reti di calcolatori"
+	return 
+	<voti> 
+	{
+		$b/esame/voto
+	} 
+	</voti>
+}
+</risultati>
+
+
+<!DOCTYPE campionati
+[<!ELEMENT campionati(campionato)*>
+<!ELEMENT campionato(partita)*>
+<!ELEMENT partita(squadraCasa,SquadraOspite,risultato)*>
+<!ELEMENT squadraCasa (#PCDATA)> 
+<!ELEMENT squadraOspite (#PCDATA)>
+<!ELEMENT risultato(gol)*>
+<!ELEMENT gol(giocatore)*>
+<!ELEMENT giocatore(#PCDATA)>
+<!ATTLIST campionato anno CDATA #REQUIRED>
+<!ATTLIST partita data CDATA #REQUIRED>
+<!ATTLIST risultato golSquadraCasa CDATA #REQUIRED>
+<!ATTLIST risultato golSquadraOspite CDATA #REQUIRED>
+<!ATTLIST giocatore nomeSquadra IDREF #REQUIRED>
+]> 
+
+<?xml version="1.0"?> 
+<campionati>
+	<campionato anno="2012">
+		<partita "11/maggio/2012">
+			<squadraCasa> Catania </squadraCasa>
+			<squadraOspite> Palermo </squadraOspite>
+			<risultato golSquadraCasa="1" golSquadraOspite="1">
+				<gol>
+					<giocatore nomeSquadra=Catania> Mascara </giocatore>
+				</gol>
+				<gol>
+					<giocatore nomeSquadra=Palermo> Miccoli </giocatore>
+				</gol>
+			</risultato>
+		</partita>
+	</campionato>
+</campionati>
+
+Dare l’elenco delle partite che hanno avuto come risultato 0 0.
+<partite0_0>
+	{
+		for $a in doc("campionati.xml")//partita
+		where ($a/risultato/@golSquadraCasa="0" AND $a/risultato/@golSquadraOspite="0")
+		return <squadre>
+					{
+						$a/squadraCasa , <trattino>-</trattino> , $a/squadraOspite , $a/@data
+					}
+			   </squadre>
+	}
+</partite0_0>
+
+Dare il risultato di tutte le partite giocate dalla Juventus contro la Roma
+<results>
+for $a in doc(campionati.xml)//partita
+where( ($a/squadraCasa="Juventus" AND $a/squadraOspite="Roma")
+								 OR
+	   ($a/squadraCasa="Roma" AND $a/squadraOspite="Juventus") )
+return <risultato>
+	    {
+			$a/risultato/@golSquadraCasa , <trattino>-</trattino> , $a/risultato/@golSquadraOspite 
+		}
+	   </risultato>
+</results>
+
+
+Trovare il giocatore che nel campionato del 2014 ha segnato piu’ gol.   Ibra Mascara Mascara Gomez gomez gomez
+
+<results>
+	let $max:=0
+	let $bomber={}
+	for $b in distinct-values(doc("campionati.xml")/campionati/campionato[@anno="2014"]//giocatore)
+		let $c:=count(doc("campionati.xml")/campionati/campionato[@anno="2014"]//giocatore=$b)
+		if($max < $c) $max=$c $bomber={$b}
+		else if($max=$c) $bomber=$bomber . {$b}
+		
+	return <bomber> { $bomber} </bomber> <gol>{ $max }</gol>
+</results>
+
+
+
+
+
+
+
+
+<!ELEMENT chiamate ( chiamata* ) >
+<!ELEMENT chiamata ( data , ( operatore+ | contatto+ ) , prodotto? ) >
+<!ATTLIST chiamata cliente CDATA #REQUIRED >
+<!ELEMENT operatore ( codice, nome , cognome ) >
+<!ELEMENT contatto ( nome , cognome , telefono )>
+<!ELEMENT codice ( #PCDATA ) >
+<!ELEMENT cognome ( #PCDATA ) >
+<!ELEMENT nome ( #PCDATA ) >
+<!ELEMENT telefono ( #PCDATA ) >
+<!ELEMENT data ( #PCDATA ) >
+<! ELEMENT vendita EMPTY >
+
+
+
+
+<?xml version="1.0" ?>
+<chiamate>
+	<chiamata cliente="mario rossi">
+		<data> 11/12/2010 </data>
+		<operatore>
+			<codice>12345</codice>
+			<nome>Teo</nome>
+			<cognome>verdi</cognome>
+		</operatore>
+		<operatore>
+			<codice>1234567</codice>
+			<nome>martin</nome>
+			<cognome>monaco</cognome>
+		</operatore>
+		<prodotto>
+			aspirapolvere
+		</prodotto>
+		<vendita> si </vendita>
+	</chiamata>
+</chiamate>
+
+
+2. Scrivere una query per elencare tutti i contatti svolti dall’operatore con codice 500 nel mese di
+gennaio 2020 indicando nome e cognome della persona chiamata e prodotto venduto.
+
+<results>
+	for $a in doc(registri.xml)/chiamate
+	where year($a/chiamata/data)="2020" AND $a/chiamata/operatore/codice="500"
+	return 
+	<chiamateOp500>
+	{
+		$a/@cliente , $a/chiamata/prodotto
+	}
+	</chiamateOp500>
+</results>
+
+
+
+
+<! ELEMENT prenotazioni ( prenotazione* ) >
+<! ELEMENT prenotazione ( data , ( docente+ | studente+ ), aula ) >
+<! ATTLIST prenotazione materia CDATA #REQUIRED >
+<! ELEMENT docente ( nome , cognome ) >
+<! ELEMENT studente ( matricola, nome , cognome)>
+<! ELEMENT cognome ( #PCDATA ) >
+<! ELEMENT nome ( #PCDATA ) >
+<! ELEMENT data ( #PCDATA ) >
+<! ELEMENT aula ( #PCDATA ) >
+
+<?xml version="1.0"?>
+<prenotazioni>
+	<prenotazione materia="Analisi 1">
+		<data> 11/02/2019 </data>
+		<docente>
+			<nome> Alfredo </nome>
+			<cognome> Pulvirenti </cognome>
+		</docente>
+		<aula> Aula 5 </aula>
+	</prenotazione>
+	
+	<prenotazione materia="Analisi 2">
+		<data> 16/05/2019 </data>
+		<studente>
+			<nome> Samuele </nome>
+			<cognome> Gallina </cognome>
+			<matricola> 123456 </matricola>
+		</studente>
+		<aula> Aula 5 </aula>
+	</prenotazione>
+</prenotazioni>
+
+<!ELEMENT films(film)* >
+<!ELEMENT film (titolo,anno,attori+,regista,genere,recensioni) >
+<!ELEMENT attori (persona)>
+<!ELEMENT regista (persona)>
+<!ELEMENT persona(nome,cognome) >
+<!ATTLIST persona data_di_nascita CDATA #REQUIRED
+ sesso CDATA #REQUIRED >
+<!ELEMENT recensioni (recensione)+ >
+<!ELEMENT recensione (rivista,voto,data) >
+
+
+Un file	xml, che	esemplifichi	l’uso	di	tale	DTD,	contenente	i	dati	relativi	a	due	 film	
+uno	 girato	 da	 “Carlo	 Verdone”	 con	 due	 recensioni	 e	 due	 attori,	 uno	 girato	 da	
+“Luchino	Visconti”	senza	recensioni	con	3	attori	[4	punti];
+
+<?xml version="1.0" ?>
+<films>
+	<film>
+		<titolo> via col vento </titolo>
+		<anno> 1999 </anno>
+		<attori>
+			<persona data_di_nascita="1980" sesso="M">
+				<nome> Checco </nome> <cognome> Zalone </cognome>
+			</persona>
+		</attori>
+		<attori>
+			<persona data_di_nascita="1990" sesso="s">
+				<nome> rita </nome> <cognome> pavone </cognome>
+			</persona>
+		</attori>
+		<regista> Carlo verdone </regista>
+		<recensioni> 
+			<recensione> 
+				<rivista> rivista1 </rivista> <voto> 9 </voto> <data> 19/01/2000 </data>
+			</recensione>
+			<recensione> 
+				<rivista> rivista2 </rivista> <voto> 6 </voto> <data> 1/01/2000 </data>
+			</recensione>
+		</recensioni>
+	</film>
+		<film>
+		<titolo> film2 </titolo>
+		<anno> 2003 </anno>
+		<attori>
+			<persona data_di_nascita="1945" sesso="M">
+				<nome> amadeus </nome> <cognome> bini </cognome>
+			</persona>
+		</attori>
+		<attori>
+			<persona data_di_nascita="1990" sesso="s">
+				<nome> rita </nome> <cognome> pavone </cognome>
+			</persona>
+		</attori>
+		<attori>
+			<persona data_di_nascita="1992" sesso="s">
+				<nome> barbara </nome> <cognome> d'urso </cognome>
+			</persona>
+		</attori>
+		<regista> luchino visconti </regista>
+		<recensioni> 
+		</recensioni>
+	</film>
+</films>
+
+
+Una interrogazione	XQuery	che	da	un	 file	 films.xml	conforme	a	 tale	DTD	estragga	
+tutti	i	 film (titolo	anno	e	regista) che	hanno	avuto	una	recensione	con	 voto	7		 [4	
+punti].
+
+
+<results>
+{
+	for $a in doc("films.xml")/films/film
+		let $b= $a/recensione//voto
+		for $c in $b
+		where $c="7"
+		return { $a/titolo , $a/anno , $a/regista }
+}
+</results>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
